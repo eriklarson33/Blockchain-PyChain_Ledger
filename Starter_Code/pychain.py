@@ -77,7 +77,7 @@ class Block:
     creator_id: int
     prev_hash: str = '0'
     timestamp: str = datetime.datetime.utcnow().strftime("%H:%M:%S")
-    nonce: str = '0'
+    nonce: int = 0
 
     def hash_block(self):
         sha = hashlib.sha256()
@@ -112,12 +112,12 @@ class PyChain:
         num_of_zeros = "0" * self.difficulty
 
         while not calculated_hash.startswith(num_of_zeros):
-
-            block.nonce += 1
+            
+            block.nonce = block.nonce + 1
 
             calculated_hash = block.hash_block()
 
-        print("Wining Hash", calculated_hash)
+        print("Winning Hash", calculated_hash)
         return block
 
     def add_block(self, candidate_block):
@@ -170,8 +170,6 @@ pychain = setup()
 # which is set equal to a `Record` that contains the `sender`, `receiver`, and `amount` values. 
 # The updated `Block`should also include the attributes for `creator_id` and `prev_hash`.
 
-# @TODO:
-# Delete the `input_data` variable from the Streamlit interface.
 
 
 # @TODO:
@@ -208,8 +206,8 @@ if st.button("Add Block"):
 
 st.markdown("## The PyChain Ledger")
 
-pychain_df = pd.DataFrame(pychain.chain)
-st.write(pychain_df)
+pychain_df = pd.DataFrame(pychain.chain).astype("str")
+st.table(pychain_df)
 
 difficulty = st.sidebar.slider("Block Difficulty", 1, 5, 2)
 pychain.difficulty = difficulty
